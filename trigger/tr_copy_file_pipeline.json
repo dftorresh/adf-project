@@ -3,7 +3,7 @@
 	"properties": {
 		"description": "Trigger the pipeline in charge of copy the population data file from Azure Blob Storage whenever a file is added.",
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipelines": [
 			{
 				"pipelineReference": {
