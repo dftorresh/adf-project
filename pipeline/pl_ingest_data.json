@@ -6,7 +6,14 @@
 				"name": "copy_data_activity",
 				"description": "Copy the population data from Blob Storage to the datalake",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "source_file_existence",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.00:01:00",
 					"retry": 0,
