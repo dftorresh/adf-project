@@ -1,0 +1,21 @@
+{
+	"name": "ds_cases_deaths_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_http_datalake_case_deaths_csv",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
