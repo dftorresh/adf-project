@@ -1,5 +1,5 @@
 {
-	"name": "tr_copy_file_pipeline",
+	"name": "tr_copy_population_data_file_pipeline",
 	"properties": {
 		"description": "Trigger the pipeline in charge of copy the population data file from Azure Blob Storage whenever a file is added.",
 		"annotations": [],
