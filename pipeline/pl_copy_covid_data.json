@@ -48,7 +48,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "ds_cases_deaths_csv",
+						"referenceName": "ds_covid_csv_sa",
 						"type": "DatasetReference",
 						"parameters": {
 							"relativeUrl": {
@@ -60,7 +60,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "ds_cases_deaths_target",
+						"referenceName": "ds_covid_csv_dl",
 						"type": "DatasetReference",
 						"parameters": {
 							"fileName": {
