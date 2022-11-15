@@ -60,6 +60,16 @@
 				]
 			}
 		],
+		"variables": {
+			"relativeUrl": {
+				"type": "String",
+				"defaultValue": "cloudboxacademy/covid19/raw/main/raw/main/ecdc_data/cases_deaths.csv"
+			},
+			"fileName": {
+				"type": "String",
+				"defaultValue": "cases_deaths.csv"
+			}
+		},
 		"annotations": []
 	}
 }
