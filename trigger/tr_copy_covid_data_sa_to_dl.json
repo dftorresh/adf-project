@@ -2,15 +2,26 @@
 	"name": "tr_copy_covid_data_sa_to_dl",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
-		"pipelines": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_copy_covid_data",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"sourceRelativeUrl": "cloudboxacademy/covid19/raw/main/raw/main/ecdc_data/hospital_admissions.csv",
+					"sinkFileName": "hospital_admissions.csv"
+				}
+			}
+		],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
 				"frequency": "Day",
 				"interval": 1,
-				"startTime": "2022-11-14T22:54:00Z",
-				"timeZone": "UTC"
+				"startTime": "2022-11-14T22:54:00",
+				"timeZone": "SA Pacific Standard Time"
 			}
 		}
 	}
