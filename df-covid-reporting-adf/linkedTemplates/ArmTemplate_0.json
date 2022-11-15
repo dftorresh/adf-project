@@ -23,9 +23,17 @@
 			"type": "string",
 			"defaultValue": "https://github.com"
 		},
-		"tr_copy_file_pipeline_properties_typeProperties_scope": {
+		"tr_copy_population_data_file_pipeline_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4730e184-32a7-4df6-b494-0d84adea1a60/resourceGroups/adf-course/providers/Microsoft.Storage/storageAccounts/dfadfprojectstorage"
+		},
+		"tr_copy_covid_data_sa_to_dl_properties_pl_copy_covid_data_parameters_sourceRelativeUrl": {
+			"type": "string",
+			"defaultValue": "cloudboxacademy/covid19/raw/main/raw/main/ecdc_data/hospital_admissions.csv"
+		},
+		"tr_copy_covid_data_sa_to_dl_properties_pl_copy_covid_data_parameters_sinkFileName": {
+			"type": "string",
+			"defaultValue": "hospital_admissions.csv"
 		}
 	},
 	"variables": {
@@ -80,7 +88,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_cases_deaths_csv')]",
+			"name": "[concat(parameters('factoryName'), '/ds_covid_csv_sa')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -88,12 +96,20 @@
 					"referenceName": "ls_http_datalake_case_deaths_csv",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"relativeUrl": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "HttpServerLocation",
-						"relativeUrl": "cloudboxacademy/covid19/raw/main/raw/main/ecdc_data/cases_deaths.csv"
+						"relativeUrl": {
+							"value": "@dataset().relativeUrl",
+							"type": "Expression"
+						}
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
@@ -107,7 +123,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_cases_deaths_target')]",
+			"name": "[concat(parameters('factoryName'), '/ds_covid_csv_dl')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -115,12 +131,20 @@
 					"referenceName": "ls_adls_dfadfprojectstoragelake",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"fileName": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": "cases_deaths.csv",
+						"fileName": {
+							"value": "@dataset().fileName",
+							"type": "Expression"
+						},
 						"folderPath": "covid",
 						"fileSystem": "raw"
 					},
@@ -246,16 +270,26 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "ds_cases_deaths_csv",
+								"referenceName": "ds_covid_csv_sa",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"relativeUrl": {
+										"value": "@pipeline().parameters.sourceRelativeUrl",
+										"type": "Expression"
+									}
+								}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "ds_cases_deaths_target",
+								"referenceName": "ds_covid_csv_dl",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"fileName": {
+										"value": "@pipeline().parameters.sinkFileName",
+										"type": "Expression"
+									}
+								}
 							}
 						]
 					}
@@ -264,11 +298,19 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"parameters": {
+					"sourceRelativeUrl": {
+						"type": "string"
+					},
+					"sinkFileName": {
+						"type": "string"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_cases_deaths_csv')]",
-				"[concat(variables('factoryId'), '/datasets/ds_cases_deaths_target')]"
+				"[concat(variables('factoryId'), '/datasets/ds_covid_csv_sa')]",
+				"[concat(variables('factoryId'), '/datasets/ds_covid_csv_dl')]"
 			]
 		},
 		{
@@ -459,7 +501,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/tr_copy_file_pipeline')]",
+			"name": "[concat(parameters('factoryName'), '/tr_copy_population_data_file_pipeline')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -480,7 +522,7 @@
 					"blobPathBeginsWith": "/population/blobs/",
 					"blobPathEndsWith": "population_by_age.tsv.gz",
 					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('tr_copy_file_pipeline_properties_typeProperties_scope')]",
+					"scope": "[parameters('tr_copy_population_data_file_pipeline_properties_typeProperties_scope')]",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
@@ -488,6 +530,40 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/pl_ingest_data')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tr_copy_covid_data_sa_to_dl')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "pl_copy_covid_data",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"sourceRelativeUrl": "[parameters('tr_copy_covid_data_sa_to_dl_properties_pl_copy_covid_data_parameters_sourceRelativeUrl')]",
+							"sinkFileName": "[parameters('tr_copy_covid_data_sa_to_dl_properties_pl_copy_covid_data_parameters_sinkFileName')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-11-14T22:56:00",
+						"timeZone": "SA Pacific Standard Time",
+						"schedule": {}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_copy_covid_data')]"
 			]
 		}
 	]
