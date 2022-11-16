@@ -1,0 +1,17 @@
+{
+	"name": "tr_copy_covid_data_sa_to_dl",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2022-11-16T21:27:00",
+				"timeZone": "SA Pacific Standard Time"
+			}
+		}
+	}
+}
