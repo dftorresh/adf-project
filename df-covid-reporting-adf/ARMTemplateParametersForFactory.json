@@ -19,12 +19,6 @@
 		},
 		"tr_copy_population_data_file_pipeline_properties_typeProperties_scope": {
 			"value": "/subscriptions/4730e184-32a7-4df6-b494-0d84adea1a60/resourceGroups/adf-course/providers/Microsoft.Storage/storageAccounts/dfadfprojectstorage"
-		},
-		"tr_copy_covid_data_sa_to_dl_properties_pl_copy_covid_data_parameters_sourceRelativeUrl": {
-			"value": "cloudboxacademy/covid19/raw/main/raw/main/ecdc_data/hospital_admissions.csv"
-		},
-		"tr_copy_covid_data_sa_to_dl_properties_pl_copy_covid_data_parameters_sinkFileName": {
-			"value": "hospital_admissions.csv"
 		}
 	}
 }
