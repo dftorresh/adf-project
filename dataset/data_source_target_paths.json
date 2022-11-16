@@ -1,0 +1,19 @@
+{
+	"name": "data_source_target_paths",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_ablob_dfadfprojectstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "covid_data_paths.json",
+				"container": "config"
+			}
+		},
+		"schema": {}
+	}
+}
