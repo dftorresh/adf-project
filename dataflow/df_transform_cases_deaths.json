@@ -33,7 +33,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: true,",
 				"     ignoreNoFilesFound: false) ~> CasesAndDeathsSource",
-				"CasesAndDeathsSource filter(continent=='Europe' && length(country_code) > 1) ~> filterEuropeData"
+				"CasesAndDeathsSource filter(continent=='Europe' && not(isNull(country_code))) ~> filterEuropeData"
 			]
 		}
 	}
