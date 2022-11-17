@@ -19,6 +19,9 @@
 				},
 				{
 					"name": "selectCertainColumns"
+				},
+				{
+					"name": "pivotIndicatorColumn"
 				}
 			],
 			"scriptLines": [
@@ -48,7 +51,16 @@
 				"               'reported_date' = $$)",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> selectCertainColumns"
+				"     skipDuplicateMapOutputs: true) ~> selectCertainColumns",
+				"selectCertainColumns pivot(groupBy(country,",
+				"          country_code,",
+				"          population,",
+				"          reported_date,",
+				"          source),",
+				"     pivotBy(indicator, ['confirmed cases', 'deaths']),",
+				"     {} = sum(daily_count),",
+				"     columnNaming: '$V_$Ncount',",
+				"     lateral: false) ~> pivotIndicatorColumn"
 			]
 		}
 	}
