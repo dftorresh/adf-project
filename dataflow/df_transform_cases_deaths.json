@@ -33,6 +33,9 @@
 				},
 				{
 					"name": "lookupTwoDigitsCountryCode"
+				},
+				{
+					"name": "selectForSink"
 				}
 			],
 			"scriptLines": [
@@ -93,7 +96,19 @@
 				"pivotIndicatorColumn, fileTwoDigitsCountryCodes lookup(country_code == country_code_3_digit,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookupTwoDigitsCountryCode"
+				"     broadcast: 'auto')~> lookupTwoDigitsCountryCode",
+				"lookupTwoDigitsCountryCode select(mapColumn(",
+				"          country = pivotIndicatorColumn@country,",
+				"          country_code_2_digit,",
+				"          country_code_3_digit,",
+				"          population = pivotIndicatorColumn@population,",
+				"          cases_count = {confirmed cases_count},",
+				"          deaths_count,",
+				"          reported_date,",
+				"          source",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> selectForSink"
 			]
 		}
 	}
