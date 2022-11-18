@@ -10,6 +10,14 @@
 						"type": "DatasetReference"
 					},
 					"name": "CasesAndDeathsSource"
+				},
+				{
+					"linkedService": {
+						"referenceName": "ls_adls_dfadfprojectstoragelake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "fileTwoDigitsCountryCodes",
+					"description": "File on which the 2 digits country codes will be looked for."
 				}
 			],
 			"sinks": [],
@@ -22,6 +30,9 @@
 				},
 				{
 					"name": "pivotIndicatorColumn"
+				},
+				{
+					"name": "lookupTwoDigitsCountryCode"
 				}
 			],
 			"scriptLines": [
@@ -39,6 +50,17 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: true,",
 				"     ignoreNoFilesFound: false) ~> CasesAndDeathsSource",
+				"source(useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'lookup',",
+				"     fileName: 'country_lookup.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> fileTwoDigitsCountryCodes",
 				"CasesAndDeathsSource filter(continent=='Europe' && not(isNull(country_code))) ~> filterEuropeData",
 				"filterEuropeData select(mapColumn(",
 				"          country,",
@@ -60,7 +82,11 @@
 				"     pivotBy(indicator, ['confirmed cases', 'deaths']),",
 				"     {} = sum(daily_count),",
 				"     columnNaming: '$V_$Ncount',",
-				"     lateral: false) ~> pivotIndicatorColumn"
+				"     lateral: false) ~> pivotIndicatorColumn",
+				"pivotIndicatorColumn lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookupTwoDigitsCountryCode"
 			]
 		}
 	}
