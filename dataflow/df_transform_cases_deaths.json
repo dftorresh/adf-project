@@ -92,8 +92,7 @@
 				"     lateral: false) ~> pivotIndicatorColumn",
 				"pivotIndicatorColumn, fileTwoDigitsCountryCodes lookup(country_code == country_code_3_digit,",
 				"     multiple: false,",
-				"     pickup: 'first',",
-				"     asc(ERROR_FUNCTION(''), true),",
+				"     pickup: 'any',",
 				"     broadcast: 'auto')~> lookupTwoDigitsCountryCode"
 			]
 		}
