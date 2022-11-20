@@ -35,6 +35,9 @@
 				},
 				{
 					"name": "lookupCountryInfo"
+				},
+				{
+					"name": "dropLookupExtraColumns"
 				}
 			],
 			"scriptLines": [
@@ -69,7 +72,7 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> countriesDataFile",
-				"lookupCountryInfo split(startsWith(indicator, 'Daily'),",
+				"dropLookupExtraColumns split(startsWith(indicator, 'Daily'),",
 				"     startsWith(indicator, 'Weekly'),",
 				"     disjoint: false) ~> splitHospitalAdmissionsFile@(DailyHostpitalAdmissions, WeeklyHospitalAdmissions)",
 				"splitHospitalAdmissionsFile@DailyHostpitalAdmissions pivot(groupBy(country,",
@@ -99,7 +102,20 @@
 				"renameAndDropColumns, countriesDataFile lookup(renameAndDropColumns@country == countriesDataFile@country,",
 				"     multiple: false,",
 				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookupCountryInfo"
+				"     broadcast: 'auto')~> lookupCountryInfo",
+				"lookupCountryInfo select(mapColumn(",
+				"          country = countriesDataFile@country,",
+				"          country_code_2_digit,",
+				"          country_code_3_digit,",
+				"          population,",
+				"          indicator,",
+				"          reported_date,",
+				"          reported_year_week,",
+				"          value,",
+				"          source",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> dropLookupExtraColumns"
 			]
 		}
 	}
