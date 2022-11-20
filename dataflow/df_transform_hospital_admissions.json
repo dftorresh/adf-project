@@ -51,6 +51,9 @@
 				},
 				{
 					"name": "weekFirstAndLastDate"
+				},
+				{
+					"name": "joinWeekOfYearDates"
 				}
 			],
 			"scriptLines": [
@@ -120,7 +123,7 @@
 				"     {} = coalesce(sum(value),0),",
 				"     columnNaming: '$V_$Ncount',",
 				"     lateral: true) ~> pivotIndicatorColumn",
-				"splitHospitalAdmissionsFile@WeeklyHospitalAdmissions pivot(groupBy(country,",
+				"joinWeekOfYearDates pivot(groupBy(country,",
 				"          year_week,",
 				"          source),",
 				"     pivotBy(indicator, ['Weekly new hospital admissions per 100k', 'Weekly new ICU admissions per 100k']),",
@@ -157,7 +160,12 @@
 				"dimDateStream derive(ecdc_year_week = concat(year, '-W', lpad(week_of_year, 2, '0'))) ~> DeriveEcdcYearWeek",
 				"DeriveEcdcYearWeek aggregate(groupBy(ecdc_year_week),",
 				"     week_start_date = min(date),",
-				"          week_end_date = max(date)) ~> weekFirstAndLastDate"
+				"          week_end_date = max(date)) ~> weekFirstAndLastDate",
+				"splitHospitalAdmissionsFile@WeeklyHospitalAdmissions, weekFirstAndLastDate join(reported_year_week == ecdc_year_week,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> joinWeekOfYearDates"
 			]
 		}
 	}
