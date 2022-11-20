@@ -47,9 +47,6 @@
 					"name": "dropLookupExtraColumns"
 				},
 				{
-					"name": "DeriveEcdcYearWeek"
-				},
-				{
 					"name": "weekFirstAndLastDate"
 				},
 				{
@@ -157,7 +154,6 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> dropLookupExtraColumns",
-				"dimDateStream derive(ecdc_year_week = concat(year, '-W', lpad(week_of_year, 2, '0'))) ~> DeriveEcdcYearWeek",
 				"dimDateStream aggregate(groupBy(ecdc_year_week = concat(year, '-W', lpad(week_of_year, 2, '0'))),",
 				"     week_start_date = min(date),",
 				"          week_end_date = max(date)) ~> weekFirstAndLastDate",
