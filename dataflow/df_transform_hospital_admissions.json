@@ -13,7 +13,11 @@
 				}
 			],
 			"sinks": [],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "splitHospitalAdmissionsFile"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          country as string,",
@@ -35,7 +39,10 @@
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true) ~> hostpialAdmissionsStream"
+				"     columnNamesAsHeader: true) ~> hostpialAdmissionsStream",
+				"hostpialAdmissionsStream split(startsWith(indicator, 'Daily'),",
+				"     startsWith(indicator, 'Weekly'),",
+				"     disjoint: false) ~> splitHospitalAdmissionsFile@(DailyHostpitalAdmissions, WeeklyHospitalAdmissions)"
 			]
 		}
 	}
