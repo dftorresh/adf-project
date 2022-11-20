@@ -16,6 +16,9 @@
 			"transformations": [
 				{
 					"name": "splitHospitalAdmissionsFile"
+				},
+				{
+					"name": "pivotIndicatorColumn"
 				}
 			],
 			"scriptLines": [
@@ -42,7 +45,14 @@
 				"     columnNamesAsHeader: true) ~> hostpialAdmissionsStream",
 				"hostpialAdmissionsStream split(startsWith(indicator, 'Daily'),",
 				"     startsWith(indicator, 'Weekly'),",
-				"     disjoint: false) ~> splitHospitalAdmissionsFile@(DailyHostpitalAdmissions, WeeklyHospitalAdmissions)"
+				"     disjoint: false) ~> splitHospitalAdmissionsFile@(DailyHostpitalAdmissions, WeeklyHospitalAdmissions)",
+				"splitHospitalAdmissionsFile@DailyHostpitalAdmissions pivot(groupBy(country,",
+				"          date,",
+				"          source),",
+				"     pivotBy(indicator, ['Daily hospital occupancy', 'Daily ICU occupancy']),",
+				"     {} = sum(value),",
+				"     columnNaming: '$V_$Ncount',",
+				"     lateral: true) ~> pivotIndicatorColumn"
 			]
 		}
 	}
