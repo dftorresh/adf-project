@@ -19,6 +19,9 @@
 				},
 				{
 					"name": "pivotIndicatorColumn"
+				},
+				{
+					"name": "pivotWeeklyIndicatorColumn"
 				}
 			],
 			"scriptLines": [
@@ -52,7 +55,14 @@
 				"     pivotBy(indicator, ['Daily hospital occupancy', 'Daily ICU occupancy']),",
 				"     {} = coalesce(sum(value),0),",
 				"     columnNaming: '$V_$Ncount',",
-				"     lateral: true) ~> pivotIndicatorColumn"
+				"     lateral: true) ~> pivotIndicatorColumn",
+				"splitHospitalAdmissionsFile@WeeklyHospitalAdmissions pivot(groupBy(country,",
+				"          year_week,",
+				"          source),",
+				"     pivotBy(indicator, ['Weekly new hospital admissions per 100k', 'Weekly new ICU admissions per 100k']),",
+				"     {} = sum(value),",
+				"     columnNaming: '$N_$Vcount',",
+				"     lateral: true) ~> pivotWeeklyIndicatorColumn"
 			]
 		}
 	}
