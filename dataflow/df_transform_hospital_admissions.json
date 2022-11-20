@@ -17,6 +17,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "countriesDataFile"
+				},
+				{
+					"linkedService": {
+						"referenceName": "ls_adls_dfadfprojectstoragelake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "dimDateStream"
 				}
 			],
 			"sinks": [],
@@ -72,6 +79,31 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> countriesDataFile",
+				"source(output(",
+				"          date_key as date,",
+				"          date as date,",
+				"          year as short,",
+				"          month as short,",
+				"          day as short,",
+				"          day_name as string,",
+				"          day_of_year as short,",
+				"          week_of_month as short,",
+				"          week_of_year as short,",
+				"          month_name as string,",
+				"          year_month as string,",
+				"          year_week as string",
+				"     ),",
+				"     useSchema: false,",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'lookup',",
+				"     fileName: 'dim_date.csv',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true) ~> dimDateStream",
 				"dropLookupExtraColumns split(startsWith(indicator, 'Daily'),",
 				"     startsWith(indicator, 'Weekly'),",
 				"     disjoint: false) ~> splitHospitalAdmissionsFile@(DailyHostpitalAdmissions, WeeklyHospitalAdmissions)",
