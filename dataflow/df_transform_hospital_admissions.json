@@ -158,7 +158,7 @@
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> dropLookupExtraColumns",
 				"dimDateStream derive(ecdc_year_week = concat(year, '-W', lpad(week_of_year, 2, '0'))) ~> DeriveEcdcYearWeek",
-				"DeriveEcdcYearWeek aggregate(groupBy(ecdc_year_week),",
+				"dimDateStream aggregate(groupBy(ecdc_year_week = concat(year, '-W', lpad(week_of_year, 2, '0'))),",
 				"     week_start_date = min(date),",
 				"          week_end_date = max(date)) ~> weekFirstAndLastDate",
 				"splitHospitalAdmissionsFile@WeeklyHospitalAdmissions, weekFirstAndLastDate join(reported_year_week == ecdc_year_week,",
