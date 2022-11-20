@@ -50,7 +50,7 @@
 				"          date,",
 				"          source),",
 				"     pivotBy(indicator, ['Daily hospital occupancy', 'Daily ICU occupancy']),",
-				"     {} = sum(value),",
+				"     {} = coalesce(sum(value),0),",
 				"     columnNaming: '$V_$Ncount',",
 				"     lateral: true) ~> pivotIndicatorColumn"
 			]
