@@ -22,6 +22,12 @@
 				},
 				{
 					"name": "pivotWeeklyIndicatorColumn"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "renameAndDropColumns"
 				}
 			],
 			"scriptLines": [
@@ -46,7 +52,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true) ~> hostpialAdmissionsStream",
-				"hostpialAdmissionsStream split(startsWith(indicator, 'Daily'),",
+				"renameAndDropColumns split(startsWith(indicator, 'Daily'),",
 				"     startsWith(indicator, 'Weekly'),",
 				"     disjoint: false) ~> splitHospitalAdmissionsFile@(DailyHostpitalAdmissions, WeeklyHospitalAdmissions)",
 				"splitHospitalAdmissionsFile@DailyHostpitalAdmissions pivot(groupBy(country,",
@@ -62,7 +68,21 @@
 				"     pivotBy(indicator, ['Weekly new hospital admissions per 100k', 'Weekly new ICU admissions per 100k']),",
 				"     {} = sum(value),",
 				"     columnNaming: '$N_$Vcount',",
-				"     lateral: true) ~> pivotWeeklyIndicatorColumn"
+				"     lateral: true) ~> pivotWeeklyIndicatorColumn",
+				"pivotWeeklyIndicatorColumn lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"hostpialAdmissionsStream select(mapColumn(",
+				"          country,",
+				"          indicator,",
+				"          reported_date = date,",
+				"          reported_year_week = year_week,",
+				"          value,",
+				"          source",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> renameAndDropColumns"
 			]
 		}
 	}
