@@ -24,9 +24,6 @@
 					"name": "pivotWeeklyIndicatorColumn"
 				},
 				{
-					"name": "lookup1"
-				},
-				{
 					"name": "renameAndDropColumns"
 				}
 			],
@@ -69,10 +66,6 @@
 				"     {} = sum(value),",
 				"     columnNaming: '$N_$Vcount',",
 				"     lateral: true) ~> pivotWeeklyIndicatorColumn",
-				"pivotWeeklyIndicatorColumn lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
-				"     multiple: false,",
-				"     pickup: 'any',",
-				"     broadcast: 'auto')~> lookup1",
 				"hostpialAdmissionsStream select(mapColumn(",
 				"          country,",
 				"          indicator,",
