@@ -96,7 +96,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> renameAndDropColumns",
-				"renameAndDropColumns lookup(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
+				"renameAndDropColumns, countriesDataFile lookup(renameAndDropColumns@country == countriesDataFile@country,",
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> lookupCountryInfo"
