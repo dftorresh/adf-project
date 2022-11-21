@@ -33,6 +33,13 @@
 						"type": "LinkedServiceReference"
 					},
 					"name": "sinkDailyHospitalizationData"
+				},
+				{
+					"linkedService": {
+						"referenceName": "ls_adls_dfadfprojectstoragelake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkWeeklyHospitalizationData"
 				}
 			],
 			"transformations": [
@@ -235,7 +242,21 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sinkDailyHospitalizationData"
+				"     partitionBy('hash', 1)) ~> sinkDailyHospitalizationData",
+				"selectWeeklyRequieredFields sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'processed',",
+				"     folderPath: 'ecdc',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sinkWeeklyHospitalizationData"
 			]
 		}
 	}
