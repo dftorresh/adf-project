@@ -178,7 +178,8 @@
 				"     broadcast: 'auto')~> joinWeekOfYearDates",
 				"pivotWeeklyIndicatorColumn sort(desc(reported_year_week, false),",
 				"     asc(country, false)) ~> sortWeeklyData",
-				"pivotIndicatorColumn sort(asc(ERROR_FUNCTION(''), true)) ~> sortDailyData"
+				"pivotIndicatorColumn sort(desc(reported_date, false),",
+				"     asc(country, false)) ~> sortDailyData"
 			]
 		}
 	}
