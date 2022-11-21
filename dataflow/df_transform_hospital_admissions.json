@@ -170,7 +170,8 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joinWeekOfYearDates",
-				"pivotWeeklyIndicatorColumn sort(asc(ERROR_FUNCTION(''), true)) ~> sortWeeklyData"
+				"pivotWeeklyIndicatorColumn sort(desc(reported_year_week, false),",
+				"     asc(country, false)) ~> sortWeeklyData"
 			]
 		}
 	}
