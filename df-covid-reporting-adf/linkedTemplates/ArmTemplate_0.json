@@ -104,6 +104,55 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_country_codes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_adls_dfadfprojectstoragelake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "country_lookup.csv",
+						"fileSystem": "lookup"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "country",
+						"type": "String"
+					},
+					{
+						"name": "country_code_2_digit",
+						"type": "String"
+					},
+					{
+						"name": "country_code_3_digit",
+						"type": "String"
+					},
+					{
+						"name": "continent",
+						"type": "String"
+					},
+					{
+						"name": "population",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_adls_dfadfprojectstoragelake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_covid_csv_dl')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -645,9 +694,9 @@
 							"name": "CasesAndDeathsSource"
 						},
 						{
-							"linkedService": {
-								"referenceName": "ls_adls_dfadfprojectstoragelake",
-								"type": "LinkedServiceReference"
+							"dataset": {
+								"referenceName": "ds_country_codes",
+								"type": "DatasetReference"
 							},
 							"name": "fileTwoDigitsCountryCodes",
 							"description": "File on which the 2 digits country codes will be looked for."
@@ -699,19 +748,11 @@
 						"          country_code_2_digit as string,",
 						"          country_code_3_digit as string,",
 						"          continent as string,",
-						"          population as integer",
+						"          population as string",
 						"     ),",
-						"     useSchema: false,",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     format: 'delimited',",
-						"     fileSystem: 'lookup',",
-						"     fileName: 'country_lookup.csv',",
-						"     columnDelimiter: ',',",
-						"     escapeChar: '\\\\',",
-						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: true) ~> fileTwoDigitsCountryCodes",
+						"     ignoreNoFilesFound: false) ~> fileTwoDigitsCountryCodes",
 						"CasesAndDeathsSource filter(continent=='Europe' && not(isNull(country_code))) ~> filterEuropeData",
 						"filterEuropeData select(mapColumn(",
 						"          country,",
@@ -720,7 +761,7 @@
 						"          indicator,",
 						"          daily_count,",
 						"          source,",
-						"          each(match(name == 'date'),",
+						"          each(match(name=='date'),",
 						"               'reported_date' = $$)",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
@@ -772,7 +813,327 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ds_raw_cases_and_deaths')]",
+				"[concat(variables('factoryId'), '/datasets/ds_country_codes')]",
 				"[concat(variables('factoryId'), '/linkedServices/ls_adls_dfadfprojectstoragelake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_transform_hospital_admissions')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "ls_adls_dfadfprojectstoragelake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "hostpialAdmissionsStream"
+						},
+						{
+							"dataset": {
+								"referenceName": "ds_country_codes",
+								"type": "DatasetReference"
+							},
+							"name": "countriesDataFile"
+						},
+						{
+							"linkedService": {
+								"referenceName": "ls_adls_dfadfprojectstoragelake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "dimDateStream"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "ls_adls_dfadfprojectstoragelake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sinkDailyHospitalizationData"
+						},
+						{
+							"linkedService": {
+								"referenceName": "ls_adls_dfadfprojectstoragelake",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sinkWeeklyHospitalizationData"
+						}
+					],
+					"transformations": [
+						{
+							"name": "splitHospitalAdmissionsFile"
+						},
+						{
+							"name": "pivotIndicatorColumn"
+						},
+						{
+							"name": "pivotWeeklyIndicatorColumn"
+						},
+						{
+							"name": "renameAndDropColumns"
+						},
+						{
+							"name": "lookupCountryInfo"
+						},
+						{
+							"name": "dropLookupExtraColumns"
+						},
+						{
+							"name": "weekFirstAndLastDate"
+						},
+						{
+							"name": "joinWeekOfYearDates"
+						},
+						{
+							"name": "sortWeeklyData"
+						},
+						{
+							"name": "sortDailyData"
+						},
+						{
+							"name": "selectRequieredFields"
+						},
+						{
+							"name": "selectWeeklyRequieredFields"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          country as string,",
+						"          indicator as string,",
+						"          date as date,",
+						"          year_week as string,",
+						"          value as double,",
+						"          source as string,",
+						"          url as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'raw',",
+						"     folderPath: 'covid',",
+						"     fileName: 'hospital_admissions.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> hostpialAdmissionsStream",
+						"source(output(",
+						"          country as string,",
+						"          country_code_2_digit as string,",
+						"          country_code_3_digit as string,",
+						"          continent as string,",
+						"          population as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> countriesDataFile",
+						"source(output(",
+						"          date_key as string,",
+						"          date as date,",
+						"          year as string,",
+						"          month as string,",
+						"          day as string,",
+						"          day_name as string,",
+						"          day_of_year as string,",
+						"          week_of_month as string,",
+						"          week_of_year as string,",
+						"          month_name as string,",
+						"          year_month as string,",
+						"          year_week as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'lookup',",
+						"     fileName: 'dim_date.csv',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> dimDateStream",
+						"dropLookupExtraColumns split(startsWith(indicator, 'Daily'),",
+						"     startsWith(indicator, 'Weekly'),",
+						"     disjoint: false) ~> splitHospitalAdmissionsFile@(DailyHostpitalAdmissions, WeeklyHospitalAdmissions)",
+						"splitHospitalAdmissionsFile@DailyHostpitalAdmissions pivot(groupBy(country,",
+						"          country_code_2_digit,",
+						"          country_code_3_digit,",
+						"          reported_date,",
+						"          population,",
+						"          source),",
+						"     pivotBy(indicator, ['Daily hospital occupancy', 'Daily ICU occupancy']),",
+						"     {} = coalesce(sum(value),0),",
+						"     columnNaming: '$V_$Ncount',",
+						"     lateral: true) ~> pivotIndicatorColumn",
+						"joinWeekOfYearDates pivot(groupBy(country,",
+						"          country_code_2_digit,",
+						"          country_code_3_digit,",
+						"          population,",
+						"          source,",
+						"          reported_year_week,",
+						"          week_start_date,",
+						"          week_end_date),",
+						"     pivotBy(indicator, ['Weekly new hospital admissions per 100k', 'Weekly new ICU admissions per 100k']),",
+						"     {} = sum(value),",
+						"     columnNaming: '$N_$Vcount',",
+						"     lateral: true) ~> pivotWeeklyIndicatorColumn",
+						"hostpialAdmissionsStream select(mapColumn(",
+						"          country,",
+						"          indicator,",
+						"          reported_date = date,",
+						"          reported_year_week = year_week,",
+						"          value,",
+						"          source",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> renameAndDropColumns",
+						"renameAndDropColumns, countriesDataFile lookup(renameAndDropColumns@country == countriesDataFile@country,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookupCountryInfo",
+						"lookupCountryInfo select(mapColumn(",
+						"          country = countriesDataFile@country,",
+						"          country_code_2_digit,",
+						"          country_code_3_digit,",
+						"          population,",
+						"          indicator,",
+						"          reported_date,",
+						"          reported_year_week,",
+						"          value,",
+						"          source",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> dropLookupExtraColumns",
+						"dimDateStream aggregate(groupBy(ecdc_year_week = concat(year,'-W',lpad(week_of_year,2,'0'))),",
+						"     week_start_date = min(date),",
+						"          week_end_date = max(date)) ~> weekFirstAndLastDate",
+						"splitHospitalAdmissionsFile@WeeklyHospitalAdmissions, weekFirstAndLastDate join(reported_year_week == ecdc_year_week,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> joinWeekOfYearDates",
+						"pivotWeeklyIndicatorColumn sort(desc(reported_year_week, false),",
+						"     asc(country, false)) ~> sortWeeklyData",
+						"pivotIndicatorColumn sort(desc(reported_date, false),",
+						"     asc(country, false)) ~> sortDailyData",
+						"sortDailyData select(mapColumn(",
+						"          country,",
+						"          country_code_2_digit,",
+						"          country_code_3_digit,",
+						"          population,",
+						"          reported_date,",
+						"          hospital_occupancy_count = {Daily hospital occupancy_count},",
+						"          icu_occupancy_count = {Daily ICU occupancy_count},",
+						"          source",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> selectRequieredFields",
+						"sortWeeklyData select(mapColumn(",
+						"          country,",
+						"          country_code_2_digit,",
+						"          country_code_3_digit,",
+						"          population,",
+						"          reported_year_week,",
+						"          reported_week_start_date = week_start_date,",
+						"          reported_week_end_date = week_end_date,",
+						"          new_hospital_occupancy_count = {_Weekly new hospital admissions per 100kcount},",
+						"          new_icu_occupancy_count = {_Weekly new ICU admissions per 100kcount},",
+						"          source",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> selectWeeklyRequieredFields",
+						"selectRequieredFields sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'processed',",
+						"     folderPath: 'ecdc/hospital_admissions',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:['file_admissions_processed_daily_data.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sinkDailyHospitalizationData",
+						"selectWeeklyRequieredFields sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'processed',",
+						"     folderPath: 'ecdc/hospital_admissions',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionFileNames:['file_admissions_processed_daily_data.csv'],",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> sinkWeeklyHospitalizationData"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_adls_dfadfprojectstoragelake')]",
+				"[concat(variables('factoryId'), '/datasets/ds_country_codes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_process_cases_and_deaths_data')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_process_cases_and_deaths",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:12:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_transform_cases_deaths",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"CasesAndDeathsSource": {},
+									"fileTwoDigitsCountryCodes": {},
+									"sinkCasesDeaths": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Coarse"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_transform_cases_deaths')]"
 			]
 		},
 		{
@@ -835,54 +1196,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/pl_ingest_data')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_process_cases_and_deaths_data')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "df_process_cases_and_deaths",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.00:12:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "df_transform_cases_deaths",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"CasesAndDeathsSource": {},
-									"fileTwoDigitsCountryCodes": {},
-									"sinkCasesDeaths": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Coarse"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_transform_cases_deaths')]"
 			]
 		}
 	]
