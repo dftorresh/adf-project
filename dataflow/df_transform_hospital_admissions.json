@@ -26,7 +26,15 @@
 					"name": "dimDateStream"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "ls_adls_dfadfprojectstoragelake",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sinkDailyHospitalizationData"
+				}
+			],
 			"transformations": [
 				{
 					"name": "splitHospitalAdmissionsFile"
@@ -211,7 +219,23 @@
 				"          source",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> selectWeeklyRequieredFields"
+				"     skipDuplicateMapOutputs: true) ~> selectWeeklyRequieredFields",
+				"selectRequieredFields sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delimited',",
+				"     fileSystem: 'processed',",
+				"     folderPath: 'ecdc/hospital_admissions',",
+				"     columnDelimiter: ',',",
+				"     escapeChar: '\\\\',",
+				"     quoteChar: '\\\"',",
+				"     columnNamesAsHeader: true,",
+				"     partitionFileNames:['file_admissions_processed_data.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkDailyHospitalizationData"
 			]
 		}
 	}
