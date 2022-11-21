@@ -54,6 +54,9 @@
 				},
 				{
 					"name": "sortWeeklyData"
+				},
+				{
+					"name": "sortDailyData"
 				}
 			],
 			"scriptLines": [
@@ -117,7 +120,10 @@
 				"     startsWith(indicator, 'Weekly'),",
 				"     disjoint: false) ~> splitHospitalAdmissionsFile@(DailyHostpitalAdmissions, WeeklyHospitalAdmissions)",
 				"splitHospitalAdmissionsFile@DailyHostpitalAdmissions pivot(groupBy(country,",
-				"          date,",
+				"          country_code_2_digit,",
+				"          country_code_3_digit,",
+				"          reported_date,",
+				"          population,",
 				"          source),",
 				"     pivotBy(indicator, ['Daily hospital occupancy', 'Daily ICU occupancy']),",
 				"     {} = coalesce(sum(value),0),",
@@ -171,7 +177,8 @@
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> joinWeekOfYearDates",
 				"pivotWeeklyIndicatorColumn sort(desc(reported_year_week, false),",
-				"     asc(country, false)) ~> sortWeeklyData"
+				"     asc(country, false)) ~> sortWeeklyData",
+				"pivotIndicatorColumn sort(asc(ERROR_FUNCTION(''), true)) ~> sortDailyData"
 			]
 		}
 	}
