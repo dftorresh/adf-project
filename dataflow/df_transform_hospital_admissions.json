@@ -252,12 +252,13 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true,",
-				"     partitionFileNames:[''],",
+				"     partitionFileNames:['file_admissions_processed_daily_data.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sinkWeeklyHospitalizationData"
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkWeeklyHospitalizationData"
 			]
 		}
 	}
