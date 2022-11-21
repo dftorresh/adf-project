@@ -252,7 +252,7 @@
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
 				"     columnNamesAsHeader: true,",
-				"     partitionFileNames:['file_admissions_processed_daily_data.csv'],",
+				"     partitionFileNames:['file_admissions_processed_weekly_data.csv'],",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
