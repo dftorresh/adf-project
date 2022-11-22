@@ -132,6 +132,7 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'lookup',",
+				"     folderPath: 'dim_date',",
 				"     fileName: 'dim_date.csv',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
