@@ -448,6 +448,7 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": "country_lookup.csv",
+						"folderPath": "country_lookup",
 						"fileSystem": "lookup"
 					},
 					"columnDelimiter": ",",
@@ -628,7 +629,7 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"fileName": "cases_deaths.csv",
-						"folderPath": "covid",
+						"folderPath": "covid/cases_deaths",
 						"fileSystem": "raw"
 					},
 					"columnDelimiter": ",",
@@ -1027,7 +1028,7 @@
 						"     ignoreNoFilesFound: false,",
 						"     format: 'delimited',",
 						"     fileSystem: 'raw',",
-						"     folderPath: 'covid',",
+						"     folderPath: 'covid/hospital_admissions',",
 						"     fileName: 'hospital_admissions.csv',",
 						"     columnDelimiter: ',',",
 						"     escapeChar: '\\\\',",
@@ -1063,6 +1064,7 @@
 						"     ignoreNoFilesFound: false,",
 						"     format: 'delimited',",
 						"     fileSystem: 'lookup',",
+						"     folderPath: 'dim_date',",
 						"     fileName: 'dim_date.csv',",
 						"     columnDelimiter: ',',",
 						"     escapeChar: '\\\\',",
