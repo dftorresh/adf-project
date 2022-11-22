@@ -96,7 +96,7 @@
 				"     ignoreNoFilesFound: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'raw',",
-				"     folderPath: 'covid',",
+				"     folderPath: 'covid/hospital_admissions',",
 				"     fileName: 'hospital_admissions.csv',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
