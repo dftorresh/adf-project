@@ -1,0 +1,6 @@
+{
+	"name": "pl_copy_hospital_daily_admissions_processed_to_sql",
+	"properties": {
+		"annotations": []
+	}
+}
