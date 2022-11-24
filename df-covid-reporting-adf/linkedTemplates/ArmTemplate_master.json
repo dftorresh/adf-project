@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_adls_dfadfprojectstoragelake'"
 		},
+		"ls_databricks_population_ws_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'ls_databricks_population_ws'"
+		},
 		"ls_adls_dfadfprojectstoragelake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://dfadfprojectstoragelake.dfs.core.windows.net/"
@@ -26,6 +30,10 @@
 		"tr_copy_population_data_file_pipeline_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4730e184-32a7-4df6-b494-0d84adea1a60/resourceGroups/adf-course/providers/Microsoft.Storage/storageAccounts/dfadfprojectstorage"
+		},
+		"ls_databricks_population_ws_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "1124-011003-g5rxysp7"
 		},
 		"containerUri": {
 			"type": "string",
@@ -60,11 +68,17 @@
 					"ls_adls_dfadfprojectstoragelake_accountKey": {
 						"value": "[parameters('ls_adls_dfadfprojectstoragelake_accountKey')]"
 					},
+					"ls_databricks_population_ws_accessToken": {
+						"value": "[parameters('ls_databricks_population_ws_accessToken')]"
+					},
 					"ls_adls_dfadfprojectstoragelake_properties_typeProperties_url": {
 						"value": "[parameters('ls_adls_dfadfprojectstoragelake_properties_typeProperties_url')]"
 					},
 					"ls_http_datalake_case_deaths_csv_properties_typeProperties_url": {
 						"value": "[parameters('ls_http_datalake_case_deaths_csv_properties_typeProperties_url')]"
+					},
+					"ls_databricks_population_ws_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('ls_databricks_population_ws_properties_typeProperties_existingClusterId')]"
 					},
 					"tr_copy_population_data_file_pipeline_properties_typeProperties_scope": {
 						"value": "[parameters('tr_copy_population_data_file_pipeline_properties_typeProperties_scope')]"
