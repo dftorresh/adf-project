@@ -1,5 +1,5 @@
 {
-	"name": "pl_copy_processed_data_to_sql_db",
+	"name": "pl_copy_cases_and_deaths_processed_data_to_sql",
 	"properties": {
 		"activities": [
 			{
