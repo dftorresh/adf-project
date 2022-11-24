@@ -28,9 +28,9 @@
 			],
 			"sinks": [
 				{
-					"linkedService": {
-						"referenceName": "ls_adls_dfadfprojectstoragelake",
-						"type": "LinkedServiceReference"
+					"dataset": {
+						"referenceName": "ds_processed_hospital_daily_data_file",
+						"type": "DatasetReference"
 					},
 					"name": "sinkDailyHospitalizationData"
 				},
@@ -232,15 +232,18 @@
 				"     skipDuplicateMapOutputs: true) ~> selectWeeklyRequieredFields",
 				"selectRequieredFields sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'delimited',",
-				"     fileSystem: 'processed',",
-				"     folderPath: 'ecdc/hospital_admissions_daily',",
-				"     truncate: true,",
-				"     columnDelimiter: ',',",
-				"     escapeChar: '\\\\',",
-				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true,",
+				"     input(",
+				"          Column_1 as string,",
+				"          Column_2 as string,",
+				"          Column_3 as string,",
+				"          Column_4 as string,",
+				"          Column_5 as string,",
+				"          Column_6 as string,",
+				"          Column_7 as string,",
+				"          Column_8 as string",
+				"     ),",
 				"     partitionFileNames:['file_admissions_processed_daily_data.csv'],",
+				"     truncate: true,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
