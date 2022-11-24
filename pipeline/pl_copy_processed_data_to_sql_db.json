@@ -1,6 +1,24 @@
 {
 	"name": "pl_copy_processed_data_to_sql_db",
 	"properties": {
+		"activities": [
+			{
+				"name": "copy_cases_and_deaths_data",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			}
+		],
 		"annotations": []
 	}
 }
