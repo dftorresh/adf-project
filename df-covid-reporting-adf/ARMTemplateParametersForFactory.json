@@ -14,17 +14,20 @@
 		"ls_databricks_population_ws_accessToken": {
 			"value": ""
 		},
+		"ls_covid_sql_db_connectionString": {
+			"value": ""
+		},
 		"ls_adls_dfadfprojectstoragelake_properties_typeProperties_url": {
 			"value": "https://dfadfprojectstoragelake.dfs.core.windows.net/"
+		},
+		"ls_databricks_population_ws_properties_typeProperties_existingClusterId": {
+			"value": "1124-011003-g5rxysp7"
 		},
 		"ls_http_datalake_case_deaths_csv_properties_typeProperties_url": {
 			"value": "https://github.com"
 		},
 		"tr_copy_population_data_file_pipeline_properties_typeProperties_scope": {
 			"value": "/subscriptions/4730e184-32a7-4df6-b494-0d84adea1a60/resourceGroups/adf-course/providers/Microsoft.Storage/storageAccounts/dfadfprojectstorage"
-		},
-		"ls_databricks_population_ws_properties_typeProperties_existingClusterId": {
-			"value": "1124-011003-g5rxysp7"
 		}
 	}
 }

@@ -19,9 +19,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'ls_databricks_population_ws'"
 		},
+		"ls_covid_sql_db_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_covid_sql_db'"
+		},
 		"ls_adls_dfadfprojectstoragelake_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://dfadfprojectstoragelake.dfs.core.windows.net/"
+		},
+		"ls_databricks_population_ws_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "1124-011003-g5rxysp7"
 		},
 		"ls_http_datalake_case_deaths_csv_properties_typeProperties_url": {
 			"type": "string",
@@ -30,10 +38,6 @@
 		"tr_copy_population_data_file_pipeline_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4730e184-32a7-4df6-b494-0d84adea1a60/resourceGroups/adf-course/providers/Microsoft.Storage/storageAccounts/dfadfprojectstorage"
-		},
-		"ls_databricks_population_ws_properties_typeProperties_existingClusterId": {
-			"type": "string",
-			"defaultValue": "1124-011003-g5rxysp7"
 		},
 		"containerUri": {
 			"type": "string",
@@ -71,21 +75,44 @@
 					"ls_databricks_population_ws_accessToken": {
 						"value": "[parameters('ls_databricks_population_ws_accessToken')]"
 					},
+					"ls_covid_sql_db_connectionString": {
+						"value": "[parameters('ls_covid_sql_db_connectionString')]"
+					},
 					"ls_adls_dfadfprojectstoragelake_properties_typeProperties_url": {
 						"value": "[parameters('ls_adls_dfadfprojectstoragelake_properties_typeProperties_url')]"
 					},
-					"ls_http_datalake_case_deaths_csv_properties_typeProperties_url": {
-						"value": "[parameters('ls_http_datalake_case_deaths_csv_properties_typeProperties_url')]"
-					},
 					"ls_databricks_population_ws_properties_typeProperties_existingClusterId": {
 						"value": "[parameters('ls_databricks_population_ws_properties_typeProperties_existingClusterId')]"
+					},
+					"ls_http_datalake_case_deaths_csv_properties_typeProperties_url": {
+						"value": "[parameters('ls_http_datalake_case_deaths_csv_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "df-covid-reporting-adf_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"tr_copy_population_data_file_pipeline_properties_typeProperties_scope": {
 						"value": "[parameters('tr_copy_population_data_file_pipeline_properties_typeProperties_scope')]"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'df-covid-reporting-adf_ArmTemplate_0')]"
+			]
 		}
 	]
 }
