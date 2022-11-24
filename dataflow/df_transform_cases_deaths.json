@@ -22,9 +22,9 @@
 			],
 			"sinks": [
 				{
-					"linkedService": {
-						"referenceName": "ls_adls_dfadfprojectstoragelake",
-						"type": "LinkedServiceReference"
+					"dataset": {
+						"referenceName": "ds_processed_cases_and_deaths_file",
+						"type": "DatasetReference"
 					},
 					"name": "sinkCasesDeaths"
 				}
@@ -111,15 +111,18 @@
 				"     skipDuplicateMapOutputs: true) ~> selectForSink",
 				"selectForSink sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     format: 'delimited',",
-				"     fileSystem: 'processed',",
-				"     folderPath: 'ecdc/cases_and_deaths',",
-				"     truncate: true,",
-				"     columnDelimiter: ',',",
-				"     escapeChar: '\\\\',",
-				"     quoteChar: '\\\"',",
-				"     columnNamesAsHeader: true,",
+				"     input(",
+				"          country as string,",
+				"          country_code_2_digit as string,",
+				"          country_code_3_digit as string,",
+				"          population as string,",
+				"          cases_count as string,",
+				"          deaths_count as string,",
+				"          reported_date as string,",
+				"          source as string",
+				"     ),",
 				"     partitionFileNames:['processed_cases_and_deaths_data.csv'],",
+				"     truncate: true,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
