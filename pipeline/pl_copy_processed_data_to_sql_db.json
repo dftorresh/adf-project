@@ -1,0 +1,6 @@
+{
+	"name": "pl_copy_processed_data_to_sql_db",
+	"properties": {
+		"annotations": []
+	}
+}
