@@ -11,10 +11,10 @@
 		"ls_adls_dfadfprojectstoragelake_accountKey": {
 			"value": ""
 		},
-		"ls_databricks_population_ws_accessToken": {
+		"ls_covid_sql_db_connectionString": {
 			"value": ""
 		},
-		"ls_covid_sql_db_connectionString": {
+		"ls_databricks_population_ws_accessToken": {
 			"value": ""
 		},
 		"ls_adls_dfadfprojectstoragelake_properties_typeProperties_url": {
