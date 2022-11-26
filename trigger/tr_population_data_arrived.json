@@ -2,12 +2,19 @@
 	"name": "tr_population_data_arrived",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
-		"pipelines": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_execute_population_data_pipelines",
+					"type": "PipelineReference"
+				}
+			}
+		],
 		"type": "BlobEventsTrigger",
 		"typeProperties": {
 			"blobPathBeginsWith": "/population/blobs/",
-			"blobPathEndsWith": ".gz",
+			"blobPathEndsWith": "population_by_age.tsv.gz",
 			"ignoreEmptyBlobs": true,
 			"scope": "/subscriptions/4730e184-32a7-4df6-b494-0d84adea1a60/resourceGroups/adf-course/providers/Microsoft.Storage/storageAccounts/dfadfprojectstorage",
 			"events": [
