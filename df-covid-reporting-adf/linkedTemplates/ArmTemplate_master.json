@@ -35,7 +35,7 @@
 			"type": "string",
 			"defaultValue": "https://github.com"
 		},
-		"tr_copy_population_data_file_pipeline_properties_typeProperties_scope": {
+		"tr_population_data_arrived_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/4730e184-32a7-4df6-b494-0d84adea1a60/resourceGroups/adf-course/providers/Microsoft.Storage/storageAccounts/dfadfprojectstorage"
 		},
@@ -105,8 +105,8 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"tr_copy_population_data_file_pipeline_properties_typeProperties_scope": {
-						"value": "[parameters('tr_copy_population_data_file_pipeline_properties_typeProperties_scope')]"
+					"tr_population_data_arrived_properties_typeProperties_scope": {
+						"value": "[parameters('tr_population_data_arrived_properties_typeProperties_scope')]"
 					}
 				}
 			},
