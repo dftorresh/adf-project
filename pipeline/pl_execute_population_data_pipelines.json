@@ -1,0 +1,20 @@
+{
+	"name": "pl_execute_population_data_pipelines",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Ingest Population Data",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "Execution"
+		},
+		"annotations": []
+	}
+}
