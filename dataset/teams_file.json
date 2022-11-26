@@ -1,0 +1,19 @@
+{
+	"name": "teams_file",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_dfadfprojectstoragelake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "teams.json",
+				"fileSystem": "processed"
+			}
+		},
+		"schema": {}
+	}
+}
