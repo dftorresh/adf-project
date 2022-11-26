@@ -172,6 +172,9 @@
 				]
 			}
 		],
+		"folder": {
+			"name": "Sqlize"
+		},
 		"annotations": []
 	}
 }
