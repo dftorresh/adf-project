@@ -149,6 +149,9 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
+				"folder": {
+					"name": "Process"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -163,6 +166,9 @@
 				"linkedServiceName": {
 					"referenceName": "ls_ablob_dfadfprojectstorage",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Lookup"
 				},
 				"annotations": [],
 				"type": "Json",
@@ -187,6 +193,9 @@
 				"linkedServiceName": {
 					"referenceName": "ls_adls_dfadfprojectstoragelake",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Lookup"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -243,6 +252,9 @@
 						"type": "string"
 					}
 				},
+				"folder": {
+					"name": "Raw"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -280,6 +292,9 @@
 						"type": "string"
 					}
 				},
+				"folder": {
+					"name": "Raw"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -309,6 +324,9 @@
 				"linkedServiceName": {
 					"referenceName": "ls_ablob_dfadfprojectstorage",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Raw"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -340,6 +358,9 @@
 					"referenceName": "ls_adls_dfadfprojectstoragelake",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "Raw"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -368,6 +389,9 @@
 				"linkedServiceName": {
 					"referenceName": "ls_adls_dfadfprojectstoragelake",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Processed"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -431,6 +455,9 @@
 					"referenceName": "ls_adls_dfadfprojectstoragelake",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "Processed"
+				},
 				"annotations": [],
 				"type": "DelimitedText",
 				"typeProperties": {
@@ -477,6 +504,73 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_processed_testing_file')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_adls_dfadfprojectstoragelake",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Processed"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "ecdc/testing",
+						"fileSystem": "processed"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_adls_dfadfprojectstoragelake')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_raw_cases_and_deaths')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -484,6 +578,9 @@
 				"linkedServiceName": {
 					"referenceName": "ls_adls_dfadfprojectstoragelake",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Raw"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -551,6 +648,9 @@
 					"referenceName": "ls_covid_sql_db",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "Sql"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [
@@ -608,6 +708,9 @@
 					"referenceName": "ls_covid_sql_db",
 					"type": "LinkedServiceReference"
 				},
+				"folder": {
+					"name": "Sql"
+				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [
@@ -657,70 +760,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_processed_testing_file')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_adls_dfadfprojectstoragelake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "ecdc/testing",
-						"fileSystem": "processed"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_adls_dfadfprojectstoragelake')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/ds_sql_table_testing')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -728,6 +767,9 @@
 				"linkedServiceName": {
 					"referenceName": "ls_covid_sql_db",
 					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Sql"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -853,6 +895,9 @@
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
+				},
+				"folder": {
+					"name": "Sqlize"
 				},
 				"annotations": []
 			},
