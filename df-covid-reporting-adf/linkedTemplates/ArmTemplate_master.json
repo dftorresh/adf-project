@@ -39,6 +39,10 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/4730e184-32a7-4df6-b494-0d84adea1a60/resourceGroups/adf-course/providers/Microsoft.Storage/storageAccounts/dfadfprojectstorage"
 		},
+		"WorldCupTeams_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://worldcupjson.net"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -86,6 +90,9 @@
 					},
 					"ls_http_datalake_case_deaths_csv_properties_typeProperties_url": {
 						"value": "[parameters('ls_http_datalake_case_deaths_csv_properties_typeProperties_url')]"
+					},
+					"WorldCupTeams_properties_typeProperties_url": {
+						"value": "[parameters('WorldCupTeams_properties_typeProperties_url')]"
 					}
 				}
 			},
