@@ -6,7 +6,7 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "pl_copy_covid_data",
+					"referenceName": "pl_ingest_covid_data",
 					"type": "PipelineReference"
 				}
 			}
